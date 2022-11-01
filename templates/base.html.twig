@@ -15,5 +15,15 @@
     </head>
     <body>
         {% block body %}{% endblock %}
+
+        <p>
+            {% for label, messages in app.flashes(['notice', 'error']) %}
+                {% for message in messages %}
+                    <div class="flash-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </p>
     </body>
 </html>
