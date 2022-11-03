@@ -43,6 +43,7 @@ RUN set -eux; \
     	apcu \
 		opcache \
 		amqp \
+		xsl \
     ;
 
 ###> recipes ###
