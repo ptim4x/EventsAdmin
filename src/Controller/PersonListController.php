@@ -4,16 +4,19 @@ namespace App\Controller;
 
 use App\Form\PersonListType;
 use App\Service\FileUploader;
+use App\Message\CsvFormatting;
+use App\Service\PersonFormatter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PersonListController extends AbstractController
 {
     #[Route('/personlist/format', name: 'app_personlist_format')]
-    public function format(Request $request, FileUploader $fileUploader): Response
+    public function format(Request $request, FileUploader $fileUploader, MessageBusInterface $bus): Response
     {
         $form = $this->createForm(PersonListType::class);
         $form->handleRequest($request);
@@ -32,7 +35,8 @@ class PersonListController extends AbstractController
                 ->upload($personListFile);
 
             if($personListFileName) {
-                // Todo send message notification for async processing
+                // will cause the FileFormattingHandler to be called
+                $bus->dispatch(new CsvFormatting($personListFileName, $recipientEmail, PersonFormatter::class));
 
                 $this->addFlash(
                     'notice',

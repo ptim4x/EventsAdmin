@@ -28,3 +28,10 @@ services:
     App\Service\FileUploader:
         arguments:
             $uploadDirectory: '%upload_directory%'
+
+    App\Service\PersonFormatter:
+        public: true
+
+    App\MessageHandler\CsvFormattingHandler:
+        arguments:
+            $container: '@service_container'
