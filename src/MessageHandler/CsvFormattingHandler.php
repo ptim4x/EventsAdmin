@@ -5,14 +5,18 @@ namespace App\MessageHandler;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use App\Message\CsvFormatting;
+use App\Message\MailNotification;
 use App\Interface\FormatterInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 #[AsMessageHandler]
 class CsvFormattingHandler
 {
-    public function __construct(private ContainerInterface $container)
+    public function __construct(
+        private ContainerInterface $container, 
+        private MessageBusInterface $bus)
     {}
 
     public function __invoke(CsvFormatting $message)
@@ -20,7 +24,12 @@ class CsvFormattingHandler
         if(file_exists($message->getPath())) {
             $formatter = $this->container->get($message->getFormatter());
             $newRecords = $this->formatFile($message->getPath(), $formatter);
-            $this->writeNewFile($newRecords, $message->getPath());
+            $personFormatedFileName = $this->writeNewFile($newRecords, $message->getPath());
+
+            if($message->getEmail()) {
+                // will cause the MailNotificationHandler to be called
+                $this->bus->dispatch(new MailNotification($personFormatedFileName, $message->getEmail(), time()));
+            }
         }
     }
 
