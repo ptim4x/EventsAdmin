@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\service;
+namespace App\Tests\Service;
 
 use App\Service\PersonFormatter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

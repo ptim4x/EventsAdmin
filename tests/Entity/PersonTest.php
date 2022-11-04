@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\service;
+namespace App\Tests\Entity;
 
 use App\Entity\Person;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +19,7 @@ class PersonTest extends TestCase
     {
         $person = new Person();
         $person->setLastname('Nom')
-            ->setLastname('Prenom');
+            ->setFirstname('Prenom');
 
         // rule : civilite = uppercase(lastname) . ' ' . firstname
         $this->assertEquals($person->getCivilite(), 'NOM Prenom');
