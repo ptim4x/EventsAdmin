@@ -14,6 +14,8 @@ class MailNotification
         private string $email,
         // processing timestamp
         private int $prossessingTime,
+        // processing error
+        private string $prossessingError,
         // delete local file when email is sent
         private bool $fileToDelete = true,
     )
@@ -75,6 +77,24 @@ class MailNotification
     public function setProssessingTime(int $prossessingTime): self
     {
         $this->prossessingTime = $prossessingTime;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of prossessingError
+     */
+    public function getProssessingError()
+    {
+        return $this->prossessingError;
+    }
+
+    /**
+     * Set the value of prossessingError
+     */
+    public function setProssessingError($prossessingError): self
+    {
+        $this->prossessingError = $prossessingError;
 
         return $this;
     }

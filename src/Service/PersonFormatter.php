@@ -17,7 +17,7 @@ class PersonFormatter implements FormatterInterface
     {}
 
     /**
-     * Return a well formated Person array
+     * Return a well formatted Person array
      *
      * @param string $email
      * @param string $lastname
@@ -26,6 +26,10 @@ class PersonFormatter implements FormatterInterface
      */
     public function format(array $data) : array
     {
+        if(count($data) != 3) {
+            throw new \Exception('Format de fichier CSV invalide, 3 colonnes sont requises');
+        }
+
         $person = new Person();
         $person->setEmail($data[0])
                 ->setLastname($data[1])

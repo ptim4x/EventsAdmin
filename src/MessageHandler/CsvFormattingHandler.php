@@ -22,13 +22,21 @@ class CsvFormattingHandler
     public function __invoke(CsvFormatting $message)
     {
         if(file_exists($message->getPath())) {
+            $csvpath = $message->getPath();
             $formatter = $this->container->get($message->getFormatter());
-            $newRecords = $this->formatFile($message->getPath(), $formatter);
-            $personFormatedFileName = $this->writeNewFile($newRecords, $message->getPath());
+
+            $error='';
+            try {
+                $newRecords = $this->formatFile($csvpath, $formatter);
+                $csvpath = $this->writeNewFile($newRecords, $csvpath);
+            } catch (\Exception $e) {
+                $error = $e->getMessage();
+            }
+            
 
             if($message->getEmail()) {
                 // will cause the MailNotificationHandler to be called
-                $this->bus->dispatch(new MailNotification($personFormatedFileName, $message->getEmail(), time()));
+                $this->bus->dispatch(new MailNotification($csvpath, $message->getEmail(), time(), $error));
             }
         }
     }

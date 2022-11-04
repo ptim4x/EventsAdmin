@@ -17,18 +17,24 @@ class MailNotificationHandler
     public function __invoke(MailNotification $message)
     {
         if(file_exists($message->getPath()) && !empty($message->getEmail())) {
-            $processing_datetime = new \DateTime();
-            $processing_datetime->setTimestamp($message->getProssessingTime());
+
+            if($message->getProssessingError()) {
+                $template_params = ['processing_error' => $message->getProssessingError()];
+            } else {
+                $processing_datetime = new \DateTime();
+                $processing_datetime->setTimestamp($message->getProssessingTime());
+                $template_params = ['processing_datetime' => $processing_datetime];              
+            }
+
+            $template_type = $message->getProssessingError() ? 'error' : 'success';
 
             // email with template and file attachement
             $email = (new TemplatedEmail())
             ->to($message->getEmail())
             ->priority(Email::PRIORITY_HIGH)
             ->subject('Liste de personne')
-            ->htmlTemplate('emails/formatting_success.html.twig')
-            ->context([
-                'processing_datetime' => $processing_datetime,
-            ])
+            ->htmlTemplate("emails/formatting_{$template_type}.html.twig")
+            ->context($template_params)
             ->attachFromPath($message->getPath());
 
             $this->mailer->send($email);
